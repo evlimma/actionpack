@@ -718,9 +718,9 @@ function containerType(): \EvLimma\ComponentBuilder\ComponentBuilder
 /**
  * @return \Source\Support\Message
  */
-function message(): \Source\Support\Message
+function message(): \EvLimma\ActionPack\Message
 {
-    return new \Source\Support\Message();
+    return new \EvLimma\ActionPack\Message();
 }
 
 /**
@@ -785,11 +785,11 @@ function notifError()
 }
 
 /**
- * @return \Source\Core\Session
+ * @return \EvLimma\ActionPack\Session
  */
-function session(): \Source\Core\Session
+function session(): \EvLimma\ActionPack\Session
 {
-    return new \Source\Core\Session();
+    return new \EvLimma\ActionPack\Session();
 }
 
 /**
@@ -832,7 +832,7 @@ function controlAccess(string $modulo, int $nivel, mixed $retorno = true): mixed
  */
 function request_limit(string $key, int $limit = 5, int $seconds = 60): bool
 {
-    $session = new \Source\Core\Session();
+    $session = new \EvLimma\ActionPack\Session();
     if ($session->has($key) && $session->$key->time >= time() && $session->$key->requests < $limit) {
         $session->set($key, [
             "time" => time() + $seconds,
@@ -860,7 +860,7 @@ function request_limit(string $key, int $limit = 5, int $seconds = 60): bool
  */
 function request_repeat(string $field, string $value): bool
 {
-    $session = new \Source\Core\Session();
+    $session = new \EvLimma\ActionPack\Session();
     if ($session->has($field) && $session->$field == $value) {
         return true;
     }
