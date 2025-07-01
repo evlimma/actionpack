@@ -2,14 +2,12 @@
 
 namespace EvLimma\ActionPack;
 
-use EvLimma\ActionPack\OrderColItem;
 use EvLimma\ActionPack\Message;
-use EvLimma\ActionPack\DynamicColumns;
 
 trait ActionPack
 {
     protected $message;
-    protected array $addfields;
+    protected array $addfields = [];
 
     public function message(): ?Message
     {
@@ -20,11 +18,14 @@ trait ActionPack
     {
         $filter = new DynamicFilter();
 
-        foreach ($this->addfields ?? [] as $key => $value) {
+        foreach ($this->addfields as $key => $value) {
             $filter->createCol($key, $value);
         }
 
-        $filter->createColConcat("filters", (new OrderColItem())->listFields(extractRight(__CLASS__, "\\", 2)));
+        $orderColItem = "OrderColItem";
+        if (class_exists('Source\\Models\\Entities\\OrderColItem')) {
+            $filter->createColConcat("filters", (new $orderColItem())->listFields(extractRight(__CLASS__, "\\", 2)));
+        }
 
         return $filter;
     }

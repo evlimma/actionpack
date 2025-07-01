@@ -54,6 +54,11 @@ function passwd_rehash(string $hash): bool
     return password_needs_rehash($hash, CONF_PASSWD_ALGO, CONF_PASSWD_OPTION);
 }
 
+function session(): \EvLimma\ActionPack\Session
+{
+    return new \EvLimma\ActionPack\Session();
+}
+
 /**
  * @return string
  */
@@ -412,6 +417,11 @@ function url(?string $path = null): string
     return ROOT . "/" . ltrim($path, "/");
 }
 
+function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
+{
+    return ROOT . "/themes/{$theme}" . ($path ? "/" . ltrim($path, '/') : null);
+}
+
 function redirect(string $url): void
 {
     header("HTTP/1.1 302 Redirect");
@@ -425,19 +435,14 @@ function redirect(string $url): void
     exit;
 }
 
-function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
-{
-    return ROOT . "/themes/{$theme}" . ($path ? "/" . ltrim($path, '/') : null);
-}
-
 function themeDir(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
 {
-    return dirname(__DIR__, 2) . "/themes/{$theme}/" . ($path ? ltrim($path, '/') : null);
+    return dirname(__DIR__, 4) . "/themes/{$theme}/" . ($path ? ltrim($path, '/') : null);
 }
 
 function appDir(string $path, ?string $base = null): string
 {
-    return dirname(__DIR__, 2) . "/{$base}" . ($base ? "/" : "") . ltrim($path, '/');
+    return dirname(__DIR__, 4) . "/{$base}" . ($base ? "/" : "") . ltrim($path, '/');
 }
 
 function shared(?string $path = null): string
@@ -454,7 +459,7 @@ function convertUrlToPath(string $url): ?string
     if (strpos($url, ROOT) === 0) {
         $relativePath = substr($url, strlen(ROOT));
         
-        return rtrim(dirname(__DIR__, 2), DIRECTORY_SEPARATOR) . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        return rtrim(dirname(__DIR__, 4), DIRECTORY_SEPARATOR) . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
     }
 
     return null;
@@ -466,7 +471,7 @@ function replaceUrlPath(string $string, ?array $variavelOriginal = null, ?array 
         $string = str_replace($variavelOriginal, $variavelAlterada, $string);
     }
 
-    return str_replace(ROOT, dirname(__DIR__, 2), $string);
+    return str_replace(ROOT, dirname(__DIR__, 4), $string);
 }
 
 function svgColor(string $path, string $color): ?string
@@ -637,6 +642,34 @@ function date_sum(string $date, int $days): string
     return date('Y-m-d', strtotime('+' . $days . ' days', strtotime($date)));
 }
 
+function getAdjustedMonthName(): string 
+{
+    $today = new DateTime();
+    $day = (int)$today->format('d');
+
+    if ($day < 21) {
+        $today->modify('first day of last month');
+    }
+
+    $months = [
+        1 => 'janeiro',
+        2 => 'fevereiro',
+        3 => 'março',
+        4 => 'abril',
+        5 => 'maio',
+        6 => 'junho',
+        7 => 'julho',
+        8 => 'agosto',
+        9 => 'setembro',
+        10 => 'outubro',
+        11 => 'novembro',
+        12 => 'dezembro'
+    ];
+
+    $monthNumber = (int)$today->format('n');
+    return ucfirst($months[$monthNumber]);
+}
+
 /**
  * 
  */
@@ -726,103 +759,7 @@ function message(): \EvLimma\ActionPack\Message
 /**
  * @return \Source\Models\Queries\UsuaLeftJoin|null
  */
-function user(): ?\Source\Models\Queries\UsuaLeftJoin
-{
-    return \Source\Models\Auth::user();
-}
 
-/**
- * @return \Source\Models\Queries\PamoLeftJoin
- */
-function topMenuModules()
-{
-    return (new \Source\Models\Queries\PamoLeftJoin())->modulesPanel();
-}
-
-/**
- * 
- * @param string $currentModule
- * @return type
- */
-function subModulesPanel(?string $currentModule): array
-{
-    return (new \Source\Models\Queries\PamoLeftJoin())->subModules($currentModule);
-}
-
-/**
- * @return \Source\Models\Queries\PamoLeftJoin
- */
-function topMenu()
-{
-    return (new \Source\Models\Queries\PamoLeftJoin())->modulesUp();
-}
-
-/**
- * @return \Source\Models\Queries\PamoLeftJoin
- */
-function topNotification(): ?array
-{
-    $listEntity = (new \Source\Models\Entities\Notification())->listEntity();
-    return $listEntity ? array_slice((new \Source\Models\Entities\Notification())->listEntity(), 0, 10) : null;
-}
-
-/**
- * 
- * @return type
- */
-function notifQtd()
-{
-    return (new \Source\Models\Entities\Notification())->find()->count();
-}
-
-/**
- * 
- * @return type
- */
-function notifError()
-{
-    return (new \Source\Models\Entities\Notification())->find("error = 1")->count();
-}
-
-/**
- * @return \EvLimma\ActionPack\Session
- */
-function session(): \EvLimma\ActionPack\Session
-{
-    return new \EvLimma\ActionPack\Session();
-}
-
-/**
- * @return \Source\Support\SvgImg
- */
-function svgImg(): \Source\Support\SvgImg
-{
-    return new \Source\Support\SvgImg();
-}
-
-/**
- * @return \Source\Support\SvgImg
- */
-function svgLupa(): \Source\Support\SvgLupa
-{
-    return new \Source\Support\SvgLupa();
-}
-
-/**
- * @return \Source\Models\ValidaAcesso
- */
-// function validaAcesso(): \Source\Models\ValidaAcesso
-// {
-//     return new \Source\Models\ValidaAcesso();
-// }
-
-/**
- * @return \Source\Models\ValidaAcesso
- */
-function controlAccess(string $modulo, int $nivel, mixed $retorno = true): mixed
-{
-    return (new \Source\Models\ValidaAcesso())->controlePermissao($modulo, $nivel, $retorno);
-}
 
 /**
  * @param string $key
