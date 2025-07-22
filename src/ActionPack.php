@@ -22,8 +22,8 @@ trait ActionPack
             $filter->createCol($key, $value);
         }
 
-        $orderColItem = "OrderColItem";
-        if (class_exists('Source\\Models\\Entities\\OrderColItem')) {
+        $orderColItem = "Source\\Models\\Entities\\OrderColItem";
+        if (class_exists($orderColItem)) {
             $filter->createColConcat("filters", (new $orderColItem())->listFields(extractRight(__CLASS__, "\\", 2)));
         }
 
