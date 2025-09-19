@@ -391,6 +391,18 @@ function str_limit_chars(string $string1, int $limit, string $pointer = "..."): 
     return "{$chars}{$pointer}";
 }
 
+function convertStringType(string $value) {
+    if (in_array(strtolower($value), ['true', 'false'], true)) {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+    if (is_numeric($value) && ctype_digit($value)) {
+        return (int) $value;
+    }
+
+    return $value;
+}
+
 /**
  * ###############
  * ###   URL   ###
@@ -503,11 +515,6 @@ function reduzirLink(string $link, int $qtd)
     return $link;
 }
 
-/**
- * ###############
- * ###   URL   ###
- * ###############
- */
 function cycleFolder(string $dir, string $extension): array
 {
     if (is_dir($dir)) {
