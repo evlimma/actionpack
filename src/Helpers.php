@@ -139,7 +139,7 @@ function str_slug(string $string): string
         str_replace(
             " ",
             "-",
-            trim(strtr(utf8_decode($stringFilter), utf8_decode($formats), $replace))
+            trim(strtr(mb_convert_encoding($stringFilter, 'ISO-8859-1', 'UTF-8'), mb_convert_encoding($formats, 'ISO-8859-1', 'UTF-8'), $replace))
         )
     );
     return $slug;
@@ -269,7 +269,7 @@ function str_flat(string $string): string
     $flat = str_replace(
         " ",
         "",
-        trim(strtr(utf8_decode($stringFilter), utf8_decode($formats), $replace))
+        trim(strtr(mb_convert_encoding($stringFilter, 'ISO-8859-1', 'UTF-8'), mb_convert_encoding($formats, 'ISO-8859-1', 'UTF-8'), $replace))
     );
     return $flat;
 }
