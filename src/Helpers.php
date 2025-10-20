@@ -633,13 +633,17 @@ function date_sum(string $date, int $days): string
     return date('Y-m-d', strtotime('+' . $days . ' days', strtotime($date)));
 }
 
-function getAdjustedMonthName(): string 
+function getAdjustedMonthName(bool $returnObj = false): DateTime|string 
 {
     $today = new DateTime();
     $day = (int)$today->format('d');
 
     if ($day < 21) {
         $today->modify('first day of last month');
+    }
+
+    if ($returnObj) {
+        return $today;
     }
 
     $months = [
@@ -661,9 +665,15 @@ function getAdjustedMonthName(): string
     return ucfirst($months[$monthNumber]);
 }
 
-/**
- * 
- */
+function isInAllowedPeriod(): bool
+{
+    $today = new DateTime();
+    $day = (int)$today->format('j');
+    $lastDay = (int)$today->format('t');
+
+    return ($day >= 1 && $day <= 20) || ($day >= $lastDay - 1);
+}
+
 function round_time_minute(string $dateTime): ?string
 {
     $dateTime = new \DateTime($dateTime);
