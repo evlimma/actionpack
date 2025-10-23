@@ -633,12 +633,12 @@ function date_sum(string $date, int $days): string
     return date('Y-m-d', strtotime('+' . $days . ' days', strtotime($date)));
 }
 
-function getAdjustedMonthName(bool $returnObj = false): DateTime|string 
+function getAdjustedMonthName(bool $returnObj = false, int $limit = 23): DateTime|string 
 {
     $today = new DateTime();
     $day = (int)$today->format('d');
 
-    if ($day < 21) {
+    if ($day <= $limit) {
         $today->modify('first day of last month');
     }
 
