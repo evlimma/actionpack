@@ -665,13 +665,13 @@ function getAdjustedMonthName(bool $returnObj = false): DateTime|string
     return ucfirst($months[$monthNumber]);
 }
 
-function isInAllowedPeriod(): bool
+function isInAllowedPeriod(int $limit = 20): bool
 {
     $today = new DateTime();
     $day = (int)$today->format('j');
     $lastDay = (int)$today->format('t');
 
-    return ($day >= 1 && $day <= 20) || ($day >= $lastDay - 1);
+    return ($day >= 1 && $day <= $limit) || ($day >= $lastDay - 1);
 }
 
 function round_time_minute(string $dateTime): ?string
