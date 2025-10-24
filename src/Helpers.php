@@ -563,9 +563,9 @@ function date_extensive(?DateTime $date, string $format = "eeee, dd 'de' MMMM 'd
  * @param string $format
  * @return string
  */
-function date_fmt(?string $date, string $format = "d/m/Y H\hi"): string
+function date_fmt(?string $date = "now", string $format = "d/m/Y H\hi"): string
 {
-    return (new DateTime($date ?? "now"))->format($format);
+    return (new DateTime($date))->format($format);
 }
 
 function convert_num_to_En(string $value): ?string
