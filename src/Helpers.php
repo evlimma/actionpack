@@ -438,7 +438,7 @@ function themeDir(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
 
 function appDir(string $path, ?string $base = null): string
 {
-    return str_replace("/", "\\", dirname(__DIR__, 4) . "/{$base}" . ($base ? "/" : "") . ltrim($path, '/'));
+    return dirname(__DIR__, 4) . "/{$base}" . ($base ? "/" : "") . ltrim($path, '/');
 }
 
 function shared(?string $path = null): string
