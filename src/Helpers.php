@@ -234,7 +234,7 @@ function limitText(string $text, int $limit = 100): string
  */
 function findWord(string $word, ?string $phrase): bool
 {
-    return (strpos($phrase ?? '', $word) === false) ? false : true;
+    return strpos($phrase ?? '', $word) !== false;
 }
 
 /**
