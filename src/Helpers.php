@@ -410,7 +410,7 @@ function convertStringType(string $value) {
  */
 function url(?string $path = null): string
 {
-    return ROOT . "/" . ltrim($path, "/");
+    return ROOT . "/" . ltrim($path ?? "", "/");
 }
 
 function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
