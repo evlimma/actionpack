@@ -18,6 +18,10 @@ function is_passwd(string $password): bool
     return (mb_strlen($password) >= CONF_PASSWD_MIN_LEN && mb_strlen($password) <= CONF_PASSWD_MAX_LEN ? true : false);
 }
 
+function is_empty_value($v, $ifEmpty, $notEmpty) {
+    return ($v ?? '') === '' ? $ifEmpty : $notEmpty;
+}
+
 function is_empty_custom($var): bool
 {
     return in_array($var, [false, "", [], null], true);
