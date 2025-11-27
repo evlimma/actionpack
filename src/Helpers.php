@@ -232,6 +232,7 @@ function limitText(string $text, int $limit = 100): string
 
 /**
  * Verifica se uma palavra específica existe dentro de uma frase
+ * findWord('azul', 'O carro azul chegou.')
  * 
  * @param string $word
  * @param string|null $phrase
