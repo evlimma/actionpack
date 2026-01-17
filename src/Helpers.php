@@ -604,16 +604,16 @@ function is_date(string $date, string $split = "-"): bool
  * @param string $date
  * @return string
  */
-function date_fmt_br(string $date = "now"): string
+function date_fmt_br(string $date = "now", string $format = CONF_DATE_BR): string
 {
-    return (new DateTime($date))->format(CONF_DATE_BR);
+    return (new DateTime($date))->format($format);
 }
 
 /**
  * @param string $date
  * @return string
  */
-function date_fmt_app(?string $date = "now"): ?string
+function date_fmt_app(?string $date = "now", string $format = CONF_DATE_APP): ?string
 {
     if (empty(trim($date))) {
         return null;
@@ -625,7 +625,7 @@ function date_fmt_app(?string $date = "now"): ?string
         $date = ($dateArr[2] . "-" . $dateArr[1] . "-" . $dateArr[0]) . (!empty($datehour[1]) ? " " . $datehour[1] : null);
     }
 
-    return (new DateTime($date))->format(CONF_DATE_APP);
+    return (new DateTime($date))->format($format);
 }
 
 /**
