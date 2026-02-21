@@ -419,6 +419,11 @@ function url(?string $path = null): string
     return ROOT . "/" . ltrim($path ?? "", "/");
 }
 
+function uri(): string
+{
+    return str_replace(ROOT, "", "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+}
+
 function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
 {
     return ROOT . "/themes/{$theme}" . ($path ? "/" . ltrim($path, '/') : null);
