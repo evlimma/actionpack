@@ -426,7 +426,7 @@ function uri(): string
 
 function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
 {
-    return ROOT . "/themes/{$theme}" . ($path ? "/" . ltrim($path, '/') : null);
+    return ROOT . "/themes/{$theme}" . ($path ? "/" . ltrim($path, '/') : null) . (extension($path) !== "php" ? "?v=" . CONF_VERSION : null);
 }
 
 function redirect(string $url): void
@@ -455,7 +455,7 @@ function appDir(string $path, ?string $base = null): string
 function shared(?string $path = null): string
 {
     if ($path) {
-        return ROOT . "/shared/" . ltrim($path, '/');
+        return ROOT . "/shared/" . ltrim($path, '/'). "?v=" . CONF_VERSION;
     }
 
     return ROOT . "/shared";
@@ -524,6 +524,12 @@ function reduzirLink(string $link, int $qtd)
     }
 
     return $link;
+}
+
+function extension(string $filename): ?string
+{
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    return $ext ?: null;
 }
 
 function cycleFolder(string $dir, string $extension): array
