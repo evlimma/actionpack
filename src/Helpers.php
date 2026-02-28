@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ####################
  * ###   VALIDATE   ###
@@ -18,7 +19,8 @@ function is_passwd(string $password): bool
     return (mb_strlen($password) >= CONF_PASSWD_MIN_LEN && mb_strlen($password) <= CONF_PASSWD_MAX_LEN ? true : false);
 }
 
-function is_empty_value($v, $ifEmpty, $notEmpty) {
+function is_empty_value($v, $ifEmpty, $notEmpty)
+{
     return ($v ?? '') === '' ? $ifEmpty : $notEmpty;
 }
 
@@ -126,8 +128,12 @@ function isValidPng(string $filePath): bool
  * ###   INT   ###
  * ##################
  */
-function isBetween(int $value, int $min, int $max): bool 
+function isBetween(?int $value, int $min, int $max): bool
 {
+    if (is_null($value)) {
+        return false;
+    }
+
     return $value >= $min && $value <= $max;
 }
 
@@ -158,7 +164,8 @@ function str_slug(string $string): string
     return $slug;
 }
 
-function boolToString(bool $value): string {
+function boolToString(bool $value): string
+{
     return $value ? 'true' : 'false';
 }
 
@@ -406,7 +413,8 @@ function str_limit_chars(string $string1, int $limit, string $pointer = "..."): 
     return "{$chars}{$pointer}";
 }
 
-function convertStringType(string $value) {
+function convertStringType(string $value)
+{
     if (in_array(strtolower($value), ['true', 'false'], true)) {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     }
@@ -464,7 +472,7 @@ function appDir(string $path, ?string $base = null): string
 function shared(?string $path = null): string
 {
     if ($path) {
-        return ROOT . "/shared/" . ltrim($path, '/'). "?v=" . CONF_VERSION;
+        return ROOT . "/shared/" . ltrim($path, '/') . "?v=" . CONF_VERSION;
     }
 
     return ROOT . "/shared";
@@ -474,7 +482,7 @@ function convertUrlToPath(string $url): ?string
 {
     if (strpos($url, ROOT) === 0) {
         $relativePath = substr($url, strlen(ROOT));
-        
+
         return rtrim(dirname(__DIR__, 4), DIRECTORY_SEPARATOR) . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
     }
 
@@ -659,7 +667,7 @@ function date_sum(string $date, int $days): string
     return date('Y-m-d', strtotime('+' . $days . ' days', strtotime($date)));
 }
 
-function getAdjustedMonthName(bool $returnObj = false, int $limit = 20): DateTime|string 
+function getAdjustedMonthName(bool $returnObj = false, int $limit = 20): DateTime|string
 {
     $today = new DateTime();
     $day = (int)$today->format('d');
