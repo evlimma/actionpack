@@ -121,6 +121,15 @@ function isValidPng(string $filePath): bool
     return true;
 }
 
+/**
+ * ##################
+ * ###   INT   ###
+ * ##################
+ */
+function isBetween(int $value, int $min, int $max): bool 
+{
+    return $value >= $min && $value <= $max;
+}
 
 /**
  * ##################
