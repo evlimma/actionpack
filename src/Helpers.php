@@ -1084,15 +1084,21 @@ function str_pluralize(int $count, string $string, bool $full = true): ?string
     return "{$count} {$string}" . (($count === 1) ? null : "s");
 }
 
-/**
- * 
- * @param array $values
- * @return bool
- */
 function is_difference(array $values): bool
 {
     foreach ($values as $value) {
         if ($value[0] != $value[1]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function is_diff_array(?object $findCod, array $values): bool
+{
+    foreach ($values as $value) {
+        if (str_empty($findCod, $value[0]) != $value[1]) {
             return true;
         }
     }
