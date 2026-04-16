@@ -574,22 +574,49 @@ function cycleFolder(string $dir, string $extension): array
  * ################
  */
 /**
- * @param string $date
- * @param string $format
- * @return string
+ * Formata uma data para formato extenso utilizando IntlDateFormatter.
+ *
+ * @param \DateTime|null $date Data a ser formatada (aceita null e retorna string vazia)
+ * @param string $format Padrão ICU de formatação (ex: "eeee, dd 'de' MMMM 'de' yyyy")
+ * @param string $timezone Timezone da data (padrão: America/Sao_Paulo)
+ * @param string $locale Localização/idioma (padrão: pt_BR)
+ *
+ * @return string Data formatada conforme o padrão informado
+ *
+ * @example
+ * echo date_extensive(new \DateTime());
+ * // quarta-feira, 15 de abril de 2026
+ *
+ * @example
+ * echo date_extensive(new \DateTime('2024-12-25'), "dd/MM/yyyy");
+ * // 25/12/2024
  */
-function date_extensive(?DateTime $date, string $format = "eeee, dd 'de' MMMM 'de' YYYY"): string       //Ex: date_extensive(new \DateTime())
-{
-    $formatter = new IntlDateFormatter(
-        'pt_BR',
-        IntlDateFormatter::FULL,
-        IntlDateFormatter::NONE,
-        'America/Sao_Paulo',
-        IntlDateFormatter::GREGORIAN,
-        $format
-    );
+function date_extensive(
+    ?DateTime $date,
+    string $format = "eeee, dd 'de' MMMM 'de' yyyy",
+    string $timezone = 'America/Sao_Paulo',
+    string $locale = 'pt_BR'
+): string {
+    if (!$date) {
+        return '';
+    }
 
-    return $formatter->format($date);
+    static $cache = [];
+
+    $key = $locale . '|' . $timezone . '|' . $format;
+
+    if (!isset($cache[$key])) {
+        $cache[$key] = new IntlDateFormatter(
+            $locale,
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::NONE,
+            $timezone,
+            IntlDateFormatter::GREGORIAN,
+            $format
+        );
+    }
+
+    return $cache[$key]->format($date);
 }
 
 /**
@@ -877,6 +904,80 @@ function comprimirNome(string $inUsuarioCadastro, bool $primeiroNome = false)
         return $inUsuarioPriNome[0] . " " . Left($inUsuarioPriNome[1], 1) . ". " . $inUsuarioPriNome[$pkCount - 1];
     } else {
         return $inUsuarioCadastro;
+    }
+}
+
+/**
+ * Comprime um nome completo em diferentes formatos.
+ *
+ * Modos disponíveis:
+ * - 'full'          → Nome completo (padrão)
+ * - 'first'         → Apenas o primeiro nome
+ * - 'first_last'    → Primeiro + último nome
+ * - 'short'         → Primeiro + iniciais do(s) nome(s) do meio + último nome
+ *
+ * @param string $fullName Nome completo
+ * @param string $mode Modo de formatação ('full', 'first', 'first_last', 'short')
+ *
+ * @return string Nome formatado conforme o modo escolhido
+ *
+ * @example
+ * echo compressName("João da Silva Santos");
+ * // João da Silva Santos
+ *
+ * @example
+ * echo compressName("João da Silva Santos", "first");
+ * // João
+ *
+ * @example
+ * echo compressName("João da Silva Santos", "first_last");
+ * // João Santos
+ *
+ * @example
+ * echo compressName("João da Silva Santos", "short");
+ * // João d. S. Santos
+ */
+function compressName(string $fullName, string $mode = 'first_last'): string
+{
+    $fullName = trim(preg_replace('/\s+/', ' ', $fullName));
+
+    if ($fullName === '') {
+        return '';
+    }
+
+    $parts = explode(' ', $fullName);
+    $count = count($parts);
+
+    if ($count === 1) {
+        return $parts[0];
+    }
+
+    $first = $parts[0];
+    $last = $parts[$count - 1];
+
+    switch ($mode) {
+        case 'first':
+            return $first;
+
+        case 'first_last':
+            return $first . ' ' . $last;
+
+        case 'short':
+            if ($count <= 2) {
+                return $fullName;
+            }
+
+            $middle = array_slice($parts, 1, -1);
+
+            $initials = array_map(function ($name) {
+                return mb_substr($name, 0, 1) . '.';
+            }, $middle);
+
+            return $first . ' ' . implode(' ', $initials) . ' ' . $last;
+
+        case 'full':
+        default:
+            return $fullName;
     }
 }
 
