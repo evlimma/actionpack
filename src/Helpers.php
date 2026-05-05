@@ -937,8 +937,12 @@ function comprimirNome(string $inUsuarioCadastro, bool $primeiroNome = false)
  * echo compressName("João da Silva Santos", "short");
  * // João d. S. Santos
  */
-function compressName(string $fullName, string $mode = 'first_last'): string
+function compressName(?string $fullName, string $mode = 'first_last'): string
 {
+    if (empty($fullName)) {
+        return '-';
+    }
+
     $fullName = trim(preg_replace('/\s+/', ' ', $fullName));
 
     if ($fullName === '') {
