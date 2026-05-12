@@ -436,9 +436,23 @@ function url(?string $path = null): string
     return ROOT . "/" . ltrim($path ?? "", "/");
 }
 
-function uri(): string
+/**
+ * Retorna a URI relativa da aplicação removendo a constante ROOT da URL informada.
+ *
+ * Se nenhuma URL for informada, utiliza automaticamente a URL atual da requisição.
+ *
+ * @param string|null $url URL completa para conversão.
+ * @return string URI relativa da aplicação.
+ */
+function uri(?string $url = null): string
 {
-    return str_replace(ROOT, "", "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+    $currentUrl = $url ?? "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+
+    return preg_replace(
+        '#^' . preg_quote(ROOT, '#') . '#',
+        '',
+        $currentUrl
+    );
 }
 
 function theme(?string $path = null, string $theme = CONF_VIEW_ADMIN): string
