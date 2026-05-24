@@ -565,6 +565,8 @@ function extension(string $filename): ?string
 
 function cycleFolder(string $dir, string $extension): array
 {
+    $arrFiles = [];
+
     if (is_dir($dir)) {
         $dirFiles = scandir($dir);
 
@@ -576,10 +578,22 @@ function cycleFolder(string $dir, string $extension): array
             }
         }
 
-        return $arrFiles;
+        usort($arrFiles, function (string $a, string $b) {
+            $aBase = basename($a);
+            $bBase = basename($b);
+
+            $aUnderscore = str_starts_with($aBase, '_');
+            $bUnderscore = str_starts_with($bBase, '_');
+
+            if ($aUnderscore !== $bUnderscore) {
+                return $aUnderscore ? -1 : 1;
+            }
+
+            return strnatcasecmp($aBase, $bBase);
+        });
     }
 
-    return [];
+    return $arrFiles;
 }
 
 /**
@@ -646,6 +660,33 @@ function date_fmt(?string $date = "now", string $format = "d/m/Y H\hi"): string
 function convert_num_to_En(string $value): ?string
 {
     return str_replace(",", ".", str_replace(".", "", $value));
+}
+
+/**
+ * Converte um número inteiro em letra(s) do alfabeto.
+ * Ex: 1 => A, 2 => B, 3 => C, 27 => AA
+ *
+ * @param int|string $number
+ * @param bool $uppercase
+ * @return string|null
+ */
+function number_to_letter(int|string $number, bool $uppercase = true): ?string
+{
+    $number = filter_var($number, FILTER_VALIDATE_INT);
+
+    if ($number === false || $number < 1) {
+        return null;
+    }
+
+    $result = '';
+
+    while ($number > 0) {
+        $number--;
+        $result = chr(65 + ($number % 26)) . $result;
+        $number = intdiv($number, 26);
+    }
+
+    return $uppercase ? $result : mb_strtolower($result);
 }
 
 /**
