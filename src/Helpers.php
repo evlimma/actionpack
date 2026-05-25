@@ -170,24 +170,65 @@ function boolToString(bool $value): string
 }
 
 /**
- * Extrai uma parte da string da direita para esquerda a partir de uma posição encontrada nessa direção
+ * Extrai uma parte da string da direita para esquerda a partir de uma ocorrência encontrada.
  *
- * @param string $string
- * @param string $caract
- * @param integer $indice
+ * A função procura o caractere informado começando pelo final da string.
+ * O parâmetro `$indice` define qual ocorrência será utilizada:
+ *
+ * - `1` = última ocorrência
+ * - `2` = penúltima ocorrência
+ * - `3` = antepenúltima ocorrência
+ * - etc.
+ *
+ * Por padrão, o retorno inclui o caractere encontrado.
+ * Caso `$hideCaract` seja `true`, o caractere será removido do retorno.
+ *
+ * @param string|null $string String que será analisada.
+ * @param string $caract Caractere utilizado como referência na busca.
+ * @param int $indice Índice da ocorrência contando da direita para esquerda.
+ * @param bool $hideCaract Define se o caractere encontrado deve ser removido do retorno.
+ *
  * @return string|null
+ *
+ * @example
+ * ```php
+ * extractRight('/configuracoes/perfil/{field_seq}', '/', 1);
+ * // Retorna: '/{field_seq}'
+ * ```
+ *
+ * ```php
+ * extractRight('/configuracoes/perfil/{field_seq}', '/', 1, true);
+ * // Retorna: '{field_seq}'
+ * ```
  */
-function extractRight(?string $string, string $caract, int $indice): ?string
-{
+function extractRight(
+    ?string $string,
+    string $caract,
+    int $indice,
+    bool $hideCaract = false
+): ?string {
     if (!$string) {
         return null;
     }
 
-    $positions = array_keys(array_reverse(array_filter(str_split($string), fn($char) => $char === $caract), true));
+    $positions = array_keys(
+        array_reverse(
+            array_filter(
+                str_split($string),
+                fn($char) => $char === $caract
+            ),
+            true
+        )
+    );
+
     $posicao = $positions[$indice - 1] ?? null;
 
     if ($posicao !== null) {
-        return substr($string, $posicao, strlen($string));
+        if ($hideCaract) {
+            $posicao++;
+        }
+
+        return substr($string, $posicao);
     }
 
     return null;
