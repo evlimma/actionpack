@@ -474,7 +474,13 @@ function convertStringType(string $value)
  */
 function url(?string $path = null): string
 {
-    return ROOT . "/" . ltrim($path ?? "", "/");
+    $path = $path ?? "";
+    
+    if (preg_match('/^(https?:\/\/|www\.)/', $path)) {
+        return $path;
+    }
+    
+    return ROOT . "/" . ltrim($path, "/");
 }
 
 /**
@@ -562,7 +568,7 @@ function svgColor(string $path, string $color): ?string
     }
 
     $img = file_get_contents($filename);
-    $imgReplace = str_replace("#000", $color, $img);
+    $imgReplace = str_replace(["#000", "#000000", "black"], $color, $img);
     return "data:image/svg+xml;base64," . base64_encode($imgReplace);
 }
 
