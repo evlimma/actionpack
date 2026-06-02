@@ -280,11 +280,13 @@ function replaceStars($matches)
  */
 function limitText(string $text, int $limit = 100): string
 {
-    if (strlen($text) > $limit) {
-        return substr($text, 0, $limit - 3) . '...';
-    } else {
-        return $text;
+    if ($limit <= 3) {
+        return mb_substr($text, 0, $limit, 'UTF-8');
     }
+
+    return mb_strlen($text, 'UTF-8') > $limit
+        ? mb_substr($text, 0, $limit - 3, 'UTF-8') . '...'
+        : $text;
 }
 
 /**
