@@ -44,6 +44,20 @@ function passwd_rehash(string $hash): bool
     return password_needs_rehash($hash, CONF_PASSWD_ALGO, CONF_PASSWD_OPTION);
 }
 
+function generatePassword(int $length = 16): string
+{
+    $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?';
+    $password = '';
+
+    $max = strlen($characters) - 1;
+
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $characters[random_int(0, $max)];
+    }
+
+    return $password;
+}
+
 function session(): \EvLimma\ActionPack\Session
 {
     return new \EvLimma\ActionPack\Session();
@@ -478,10 +492,31 @@ function url(?string $path = null): string
 {
     $path = $path ?? "";
     
-    if (preg_match('/^(https?:\/\/|www\.)/', $path)) {
+    if (preg_match('/^(https?:\/\/|www\.|#)/', $path)) {
         return $path;
     }
     
+    return ROOT . "/" . ltrim($path, "/");
+}
+
+function url_param(?\Source\Models\Queries\RoutesCross $routesCross, ?array $params = null): string
+{
+    $path = $routesCross->url ?? "#link_hidden";
+
+    if (preg_match('/^(https?:\/\/|www\.|#)/', $path)) {
+        return $path;
+    }
+
+    if ($params) {
+        foreach ($params as $key => $value) {
+            $path = str_replace(
+                "{" . $key . "}",
+                $value,
+                $path
+            );
+        }
+    }
+
     return ROOT . "/" . ltrim($path, "/");
 }
 
@@ -921,11 +956,6 @@ function message(): \EvLimma\ActionPack\Message
 {
     return new \EvLimma\ActionPack\Message();
 }
-
-/**
- * @return \Source\Models\Queries\UsuaLeftJoin|null
- */
-
 
 /**
  * @param string $key
