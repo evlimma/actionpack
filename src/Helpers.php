@@ -1399,3 +1399,52 @@ function gerarIframeYoutube($url, $params = []): ?array
 
     return null;
 }
+
+/**
+ * Cria um array a partir dos valores de um campo de uma coleção de registros.
+ * Se `$fillKeys` for `false`, retorna apenas um array indexado contendo os valores do campo.
+ *
+ * Exemplo:
+ * ```php
+ * $profileAccessIds = arrayToFields(
+ *     (new RoutesPlan())->listEntity(),
+ *     'rout_id'
+ * );
+ *
+ * // Resultado:
+ * // [
+ * //     1 => true,
+ * //     2 => true,
+ * //     3 => true
+ * // ]
+ *
+ * $routeIds = arrayToFields(
+ *     (new RoutesPlan())->listEntity(),
+ *     'rout_id',
+ *     false
+ * );
+ *
+ * // Resultado:
+ * // [1, 2, 3]
+ * ```
+ *
+ * @param array|null $items Array de registros.
+ * @param string $field Nome do campo que será extraído.
+ * @param bool $fillKeys Define se os valores do campo serão utilizados como
+ * chaves do array (`true`) ou se será retornado um array indexado (`false`).
+ *
+ * @return array Array contendo os valores do campo.
+ */
+function arrayToFields(
+    ?array $items,
+    string $field,
+    bool $fillKeys = true
+): array {
+    $fields = array_filter(array_column($items ?? [], $field));
+
+    if (!$fillKeys) {
+        return $fields;
+    }
+
+    return array_fill_keys($fields, true);
+}
