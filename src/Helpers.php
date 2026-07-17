@@ -1449,7 +1449,6 @@ function arrayToFields(
     return array_fill_keys($fields, true);
 }
 
-if (!defined('ERROR_SAVING')) { define('ERROR_SAVING', ''); }
 function responseError(EvLimma\ActionPack\Message $self, string $message = ERROR_SAVING): void
 {
     echo json_encode(["message" => $self->error($message)->render()]);
