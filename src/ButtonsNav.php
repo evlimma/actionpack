@@ -1,5 +1,7 @@
 <?php
 
+namespace EvLimma\ActionPack;
+
 namespace source\Support;
 
 class ButtonsNav
