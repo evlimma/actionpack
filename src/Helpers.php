@@ -484,6 +484,59 @@ function convertStringType(string $value)
 }
 
 /**
+ * Converte um valor para inteiro somente quando ele for realmente um inteiro valido.
+ *
+ * Regras:
+ * - int permanece int
+ * - string numerica inteira (ex: "10", "-3") vira int
+ * - qualquer outro tipo/valor permanece inalterado
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function castIntIfValid(mixed $value): mixed
+{
+    if (is_int($value)) {
+        return $value;
+    }
+
+    if (!is_string($value)) {
+        return $value;
+    }
+
+    $normalized = trim($value);
+    if ($normalized === '') {
+        return $value;
+    }
+
+    $int = filter_var($normalized, FILTER_VALIDATE_INT);
+
+    return $int !== false ? $int : $value;
+}
+
+/**
+ * Converte valores inteiros representados como string dentro de um array.
+ *
+ * @param array|null $values Lista de valores a converter.
+ * @param bool $preserveKeys Define se as chaves originais devem ser mantidas.
+ * @return array
+ */
+function arrayCastIntValues(?array $values, bool $preserveKeys = true): array
+{
+    if (empty($values)) {
+        return [];
+    }
+
+    $converted = array_map(static fn($value) => castIntIfValid($value), $values);
+
+    if ($preserveKeys) {
+        return array_unique($converted, SORT_REGULAR);
+    }
+
+    return array_values(array_unique($converted, SORT_REGULAR));
+}
+
+/**
  * ###############
  * ###   URL   ###
  * ###############
@@ -1447,6 +1500,13 @@ function arrayToFields(
     }
 
     return array_fill_keys($fields, true);
+}
+
+function dbName(string $value): string 
+{
+    $name = str_replace(['.', '-', '/'], '', $value);
+    $dbName = "c_{$name}";
+    return $dbName;
 }
 
 function responseError(EvLimma\ActionPack\Message $self, string $message = ERROR_SAVING): void
